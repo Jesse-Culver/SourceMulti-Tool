@@ -288,3 +288,7 @@ __pycache__/
 *.xsd.cs
 
 *.o
+
+source/myDock\.layout
+
+source/imgui\.ini
