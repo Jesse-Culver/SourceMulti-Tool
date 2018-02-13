@@ -7,12 +7,11 @@
 
 #include "imgui.h"
 #include "imgui_impl_sdl_gl3.h"
+#include "main_menu_bar.h"
+#include "menu_system.h"
 #include <stdio.h>
 #include <GL/gl3w.h>    // This is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <SDL.h>
-
-static void ShowMainMenuBar();
-static void ShowDockingWindows(bool show_dock_window);
 
 int main(int, char**)
 {
@@ -46,7 +45,8 @@ int main(int, char**)
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    bool show_dock_window = true;
+    //Show Window Variables
+    bool show_menu_system = true;
 
     // Main loop
     bool done = false;
@@ -67,7 +67,7 @@ int main(int, char**)
 
         //Window code goes here
         ShowMainMenuBar();
-        ShowDockingWindows(show_dock_window);
+        MenuSystem(show_menu_system);
 
         // Rendering
         glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
@@ -84,86 +84,4 @@ int main(int, char**)
     SDL_Quit();
 
     return 0;
-}
-
-
-static void ShowMainMenuBar()
-{
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Edit"))
-        {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-}
-
-static void ShowDockingWindows(bool show_dock_window) {
-if (show_dock_window)   {
-            if (ImGui::Begin("imguidock window (= lumix engine's dock system)",&show_dock_window,ImVec2(500, 500),0.95f,ImGuiWindowFlags_NoScrollbar)) {
-                ImGui::BeginDockspace();
-                static char tmp[128];
-                for (int i=0;i<10;i++)  {
-                    sprintf(tmp,"Dock %d",i);
-                    if (i==9) ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
-                    if(ImGui::BeginDock(tmp))  {
-                        ImGui::Text("Content of dock window %d goes here",i);
-                    }
-                    ImGui::EndDock();
-                }
-    //=========== OPTIONAL STUFF ===================================================
-                static bool draggingLookOpen = true;    // With this next dock has a close button (but its state is not serializable AFAIK)
-                // We're also passing a 'default_size' as initial size of the window once undocked
-                if (ImGui::BeginDock("Dragging Look",&draggingLookOpen,0,ImVec2(200,350)))    {
-                    ImGui::Checkbox("Textured##imguidockDraggingLook",&gImGuiDockReuseTabWindowTextureIfAvailable);
-                }
-                ImGui::EndDock();
-    //===========END OPTIONAL STUFF =================================================
-    //========== OPTIONAL STUFF =====================================================
-    #           if (!defined(NO_IMGUIHELPER) && !defined(NO_IMGUIHELPER_SERIALIZATION))
-                if (ImGui::BeginDock("Load/Save"))  {
-                    static const char* saveName = "myDock.layout";
-                    const char* saveNamePersistent = "/persistent_folder/myDock.layout";
-                    const char* pSaveName = saveName;
-    #               ifndef NO_IMGUIHELPER_SERIALIZATION_SAVE
-                    if (ImGui::Button("Save")) {
-    #                   ifdef YES_IMGUIEMSCRIPTENPERSISTENTFOLDER
-                        pSaveName = saveNamePersistent;
-    #                   endif //YES_IMGUIEMSCRIPTENPERSISTENTFOLDER
-                        if (ImGui::SaveDock(pSaveName))   {
-    #                       ifdef YES_IMGUIEMSCRIPTENPERSISTENTFOLDER
-                            ImGui::EmscriptenFileSystemHelper::Sync();
-    #                       endif //YES_IMGUIEMSCRIPTENPERSISTENTFOLDER
-                        }
-                    }
-                    ImGui::SameLine();
-    #               endif //NO_IMGUIHELPER_SERIALIZATION_SAVE
-    #               ifndef NO_IMGUIHELPER_SERIALIZATION_LOAD
-                    if (ImGui::Button("Load")) {
-    #                   ifdef YES_IMGUIEMSCRIPTENPERSISTENTFOLDER
-                        if (ImGuiHelper::FileExists(saveNamePersistent)) pSaveName = saveNamePersistent;
-    #                   endif //YES_IMGUIEMSCRIPTENPERSISTENTFOLDER
-                        ImGui::LoadDock(pSaveName);
-                    }
-                    ImGui::SameLine();
-    #               endif //NO_IMGUIHELPER_SERIALIZATION_LOAD
-                }
-                ImGui::EndDock();   //Load/Save
-    #           endif //NO_IMGUIHELPER_SERIALIZATION
-    //=========== END OPTIONAL STUFF ================================================
-                ImGui::EndDockspace();
-            }
-            ImGui::End();
-        }
 }
