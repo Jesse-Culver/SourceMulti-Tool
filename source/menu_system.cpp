@@ -1,8 +1,10 @@
 //Menu System
 #include "imgui.h"
-void MenuSystem(bool show_menu_system) {
+
+void MenuSystem(bool show_menu_system, int width, int height) {
 if (show_menu_system)   {
-            if (ImGui::Begin("imguidock window (= lumix engine's dock system)",&show_menu_system,ImVec2(500, 500),0.95f,ImGuiWindowFlags_NoScrollbar)) {
+            if (ImGui::Begin("##main menu",&show_menu_system,ImVec2(width, height),0.95f,ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar)) {
+				ImGui::SetWindowSize(ImVec2(width,height), ImGuiCond_Always);
                 ImGui::BeginDockspace();
                 static char tmp[128];
                 for (int i=0;i<10;i++)  {

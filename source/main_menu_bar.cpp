@@ -1,16 +1,14 @@
 //Main Menu Bar
 #include "imgui.h"
 
-void ShowMainMenuBar()
-{
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
+void ShowMainMenuBar() {
+if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("New", "CTRL+N")) {}
+            if (ImGui::MenuItem("Save", "CTRL+S")) {}
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit"))
-        {
+        if (ImGui::BeginMenu("Edit")) {
             if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
             if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
             ImGui::Separator();

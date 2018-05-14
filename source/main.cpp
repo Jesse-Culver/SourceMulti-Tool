@@ -13,11 +13,9 @@
 #include <GL/gl3w.h>    // This is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <SDL.h>
 
-int main(int, char**)
-{
+int main(int, char**) {
     // Setup SDL
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
         printf("Error: %s\n", SDL_GetError());
         return -1;
     }
@@ -42,32 +40,42 @@ int main(int, char**)
     // Setup style
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsClassic();
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding = 0.0f;
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     //Show Window Variables
     bool show_menu_system = true;
+	bool show_sudoku_game = true;
+	ImTextureID myImageTextureId2 = 0;
+	
+    //SDL Variables that change because of client actions
+    int sdl_width;
+    int sdl_height;
 
     // Main loop
     bool done = false;
-    while (!done)
-    {
+    while (!done) {
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
+        while (SDL_PollEvent(&event)) {
             ImGui_ImplSdlGL3_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
                 done = true;
         }
         ImGui_ImplSdlGL3_NewFrame(window);
 
+        //SDL_GetWindowSize(window, &sdl_width, &sdl_height);
+        sdl_width = (int)ImGui::GetIO().DisplaySize.x;
+        sdl_height = (int)ImGui::GetIO().DisplaySize.y;
+
         //Window code goes here
         ShowMainMenuBar();
-        MenuSystem(show_menu_system);
+        MenuSystem(show_menu_system, sdl_width, sdl_height);
 
         // Rendering
         glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
