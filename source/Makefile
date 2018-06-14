@@ -15,7 +15,7 @@
 #CXX = clang++
 
 EXE = SourceMulti-Tool
-OBJS = main.o imgui_impl_sdl_gl3.o main_menu_bar.o menu_system.o
+OBJS = main.o imgui_impl_sdl_gl3.o main_menu_bar.o options_menu.o
 OBJS += ../libs/imgui/imgui.o ../libs/imgui/imgui_demo.o ../libs/imgui/imgui_draw.o
 OBJS += ../libs/gl3w/GL/gl3w.o
 

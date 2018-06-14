@@ -8,7 +8,8 @@
 #include "imgui.h"
 #include "imgui_impl_sdl_gl3.h"
 #include "main_menu_bar.h"
-#include "menu_system.h"
+#include "options_menu.h"
+
 #include <stdio.h>
 #include <GL/gl3w.h>    // This is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <SDL.h>
@@ -30,7 +31,7 @@ int main(int, char**) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     SDL_DisplayMode current;
     SDL_GetCurrentDisplayMode(0, &current);
-    SDL_Window *window = SDL_CreateWindow("Source Multi-Tool", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+    SDL_Window *window = SDL_CreateWindow("Source Multi-Tool", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
     SDL_GLContext glcontext = SDL_GL_CreateContext(window);
     gl3wInit();
 
@@ -46,9 +47,10 @@ int main(int, char**) {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     //Show Window Variables
-    bool show_menu_system = true;
-	bool show_sudoku_game = true;
-	ImTextureID myImageTextureId2 = 0;
+    bool show_main_menu = true;
+	bool show_options_menu = true;
+
+    static char main_steam_directory[128] = "Hello, world!";
 	
     //SDL Variables that change because of client actions
     int sdl_width;
@@ -74,9 +76,12 @@ int main(int, char**) {
         sdl_height = (int)ImGui::GetIO().DisplaySize.y;
 
         //Window code goes here
-        ShowMainMenuBar();
-        MenuSystem(show_menu_system, sdl_width, sdl_height);
-
+        showMainMenuBar(show_options_menu);
+        ImGui::Begin("#mainmenu",&show_main_menu,ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse);
+        ImGui::SetWindowSize(ImVec2(sdl_width, sdl_height));
+        ImGui::SetWindowPos(ImVec2(0, 20));
+        optionsMenu(show_options_menu, *main_steam_directory);
+        ImGui::End();
         // Rendering
         glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
