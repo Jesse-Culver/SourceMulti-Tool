@@ -9,6 +9,7 @@
 #include "imgui_impl_sdl_gl3.h"
 #include "main_menu_bar.h"
 #include "options_menu.h"
+#include "tools_menu.h"
 
 #include <stdio.h>
 #include <GL/gl3w.h>    // This is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
@@ -49,6 +50,7 @@ int main(int, char**) {
     //Show Window Variables
     bool show_main_menu = true;
 	bool show_options_menu = true;
+    bool show_tools_menu = true;
 
     static char main_steam_directory[128] = "Hello, world!";
 	
@@ -80,6 +82,7 @@ int main(int, char**) {
         ImGui::Begin("#mainmenu",&show_main_menu,ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse);
         ImGui::SetWindowSize(ImVec2(sdl_width, sdl_height));
         ImGui::SetWindowPos(ImVec2(0, 20));
+        toolsMenu(show_tools_menu, *main_steam_directory);
         optionsMenu(show_options_menu, *main_steam_directory);
         ImGui::End();
         // Rendering

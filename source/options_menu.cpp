@@ -11,6 +11,8 @@ void optionsMenu(bool& show_options_menu, char& main_steam_directory) {
       ImGui::SameLine();
       if (ImGui::Button("Browse")) {
       }
+      if (ImGui::Button("Save Settings")){
+      }
     }
   }
 }
