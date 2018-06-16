@@ -85,7 +85,8 @@ int main(int, char**) {
         ImGui::SetWindowPos(ImVec2(0, 20));
         toolsMenu(show_tools_menu, *main_steam_directory);
         optionsMenu(show_options_menu, main_steam_directory, show_steamError_menu);
-
+        //Due to the way ImGui's ID stack works all popups must be called from the root while function
+        //This is why we pass in bools to the other functions then if set to true get turned on below
         if(show_steamError_menu){
             ImGui::OpenPopup("ERROR01");
         }
