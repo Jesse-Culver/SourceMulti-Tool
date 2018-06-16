@@ -51,8 +51,9 @@ int main(int, char**) {
     bool show_main_menu = true;
 	bool show_options_menu = true;
     bool show_tools_menu = true;
+    bool show_steamError_menu = false;
 
-    static char main_steam_directory[128] = "Hello, world!";
+    char main_steam_directory[128] = "Hello, world!";
 	
     //SDL Variables that change because of client actions
     int sdl_width;
@@ -83,7 +84,20 @@ int main(int, char**) {
         ImGui::SetWindowSize(ImVec2(sdl_width, sdl_height));
         ImGui::SetWindowPos(ImVec2(0, 20));
         toolsMenu(show_tools_menu, *main_steam_directory);
-        optionsMenu(show_options_menu, *main_steam_directory);
+        optionsMenu(show_options_menu, main_steam_directory, show_steamError_menu);
+
+        if(show_steamError_menu){
+            ImGui::OpenPopup("ERROR01");
+        }
+        if(ImGui::BeginPopupModal("ERROR01",NULL,ImGuiWindowFlags_AlwaysAutoResize)){
+            ImGui::Text("Steam Directory Provided Does not Contain steam.exe, therefore it is not the main steam directory!");
+            if(ImGui::Button("OK")){
+                show_steamError_menu = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+
         ImGui::End();
         // Rendering
         glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
