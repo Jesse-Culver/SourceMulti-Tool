@@ -294,3 +294,5 @@ source/myDock\.layout
 source/imgui\.ini
 
 *.exe
+
+\.vscode/
