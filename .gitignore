@@ -296,3 +296,5 @@ source/imgui\.ini
 *.exe
 
 \.vscode/
+
+source/settings\.ini

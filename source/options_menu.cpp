@@ -2,8 +2,13 @@
 #include "options_menu.h"
 
 #include <fstream>
+#include <string>
 
-void optionsMenu(bool& show_options_menu, char *main_steam_directory, bool& show_steamError_menu) {
+#if defined(_WIN32) || defined(_WIN64)
+  #include <Windows.h>
+#endif
+
+void optionsMenu(bool& show_options_menu, char *main_steam_directory, bool& show_steamError_menu, bool& save_settings) {
   if(show_options_menu){
     if (ImGui::CollapsingHeader("Options")) {
       ImGui::Text("Main Steam Directory");
@@ -23,8 +28,8 @@ void optionsMenu(bool& show_options_menu, char *main_steam_directory, bool& show
       }
       if (ImGui::Button("Save Settings")){
         if(verifySteamDirectory(main_steam_directory)){
-          //save settings
-        }
+            save_settings = true;
+          }
         else{
          show_steamError_menu = true;
         }

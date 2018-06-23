@@ -44,7 +44,7 @@ ifeq ($(findstring MINGW,$(UNAME_S)),MINGW)
    ECHO_MESSAGE = "Windows"
    LIBS = -lgdi32 -lopengl32 -limm32 `pkg-config --static --libs sdl2`
 
-   CXXFLAGS = -I../libs/imgui -I../libs/gl3w `pkg-config --cflags sdl2`
+   CXXFLAGS = -I../libs/imgui -I../libs/gl3w -I../libs/simpleini `pkg-config --cflags sdl2`
    CXXFLAGS += -D"IMGUI_INCLUDE_IMGUI_USER_H" -D"IMGUI_INCLUDE_IMGUI_USER_INL"
    CXXFLAGS += -Wall -Wformat
    CFLAGS = $(CXXFLAGS)

@@ -11,9 +11,17 @@
 #include "options_menu.h"
 #include "tools_menu.h"
 
+#include "SimpleIni.h"
+
+#include <fstream>
 #include <stdio.h>
+#include <string>
 #include <GL/gl3w.h>    // This is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <SDL.h>
+#include <windows.h>
+
+std::string ExePath();
+bool verifyIni();
 
 int main(int, char**) {
     // Setup SDL
@@ -47,14 +55,30 @@ int main(int, char**) {
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    //Setting Variables
+    bool first_time = false;
+    bool save_settings = false; //When this gets set to true we save our settings
+    CSimpleIniA ini;    //This is our settings file variable
+    char main_steam_directory[260] = "Please Insert";
     //Show Window Variables
     bool show_main_menu = true;
 	bool show_options_menu = true;
     bool show_tools_menu = true;
     bool show_steamError_menu = false;
+    
+    //Checking if ini exists
+    if(verifyIni()){
+        char temp[260];
+        strncpy(temp,ExePath().c_str(),128);
+        strcat(temp, "/settings.ini");
+        ini.LoadFile(temp);
+        strcpy_s(main_steam_directory,260,ini.GetValue("main","steam",""));
+    }
+    else{
+        first_time = true;
+        show_tools_menu = false;
+    }
 
-    char main_steam_directory[128] = "Hello, world!";
-	
     //SDL Variables that change because of client actions
     int sdl_width;
     int sdl_height;
@@ -84,7 +108,7 @@ int main(int, char**) {
         ImGui::SetWindowSize(ImVec2(sdl_width, sdl_height));
         ImGui::SetWindowPos(ImVec2(0, 20));
         toolsMenu(show_tools_menu, *main_steam_directory);
-        optionsMenu(show_options_menu, main_steam_directory, show_steamError_menu);
+        optionsMenu(show_options_menu, main_steam_directory, show_steamError_menu, save_settings);
         //Due to the way ImGui's ID stack works all popups must be called from the root while function
         //This is why we pass in bools to the other functions then if set to true get turned on below
         if(show_steamError_menu){
@@ -97,6 +121,28 @@ int main(int, char**) {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
+        }
+        if(first_time){
+            ImGui::OpenPopup("FirstTimeSetup");
+        }
+        if(ImGui::BeginPopupModal("FirstTimeSetup",NULL,ImGuiWindowFlags_AlwaysAutoResize)){
+            ImGui::Text("Welcome to Source Multi-Tool!");
+            ImGui::Text("Before you can start you need to select your main steam directory in options");
+            ImGui::Text("and save.");
+            if(ImGui::Button("OK")){
+                first_time = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+        if(save_settings){
+            ini.SetValue("main", "steam", main_steam_directory);
+            char temp[260];
+            strncpy(temp,ExePath().c_str(),128);
+            strcat(temp, "/settings.ini");
+            ini.SaveFile(temp);
+            show_tools_menu = true;
+            save_settings = false;
         }
 
         ImGui::End();
@@ -115,4 +161,23 @@ int main(int, char**) {
     SDL_Quit();
 
     return 0;
+}
+
+//Credit to Eun on Stack Overflow https://stackoverflow.com/a/875264
+std::string ExePath(){
+    char buffer[MAX_PATH];
+    GetModuleFileName( NULL, buffer, MAX_PATH );
+    std::string::size_type pos = std::string( buffer ).find_last_of( "\\/" );
+    return std::string( buffer ).substr( 0, pos);
+}
+
+bool verifyIni(){
+  char temp[256];
+  strncpy(temp,ExePath().c_str(),128);
+  strcat(temp, "/settings.ini");
+  std::ifstream infile(temp);
+  if(!infile){
+    return false;
+  }
+  return true;
 }
